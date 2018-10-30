@@ -20,22 +20,39 @@ class Pacman(Sprite):
         self.center = float(self.rect.centerx)
 
         # movement flag
-        self.moving_right = False
-        self.moving_left = False
         self.moving_up = False
+        self.moving_left = False
         self.moving_down = False
+        self.moving_right = False
 
-    def update(self):
+    def update(self, maze, pac_group):
         """Update pacman's position based on movement flags"""
-        if self.moving_right:
-            self.rect.centerx += 1
-        if self.moving_left:
-            self.rect.centerx -= 1
-        if self.moving_up:
+        self.check_collide(maze)
+        if self.moving_up and self.rect.top > self.screen_rect.top:
             self.rect.bottom -= 1
-        if self.moving_down:
+        if self.moving_left and self.rect.left > self.screen_rect.left:
+                self.rect.centerx -= 1
+        if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
             self.rect.bottom += 1
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.rect.centerx += 1
 
     def blitme(self):
         # draw pacman at current location
         self.screen.blit(self.image, self.rect)
+
+    def check_collide(self, maze):
+        for nrow in range(len(maze.bricks)):
+            if self.rect.colliderect(maze.bricks[nrow]):
+                if self.moving_up:
+                    self.moving_up = False
+                    self.rect.top = maze.bricks[nrow].bottom
+                elif self.moving_left:
+                    self.moving_left = False
+                    self.rect.left = maze.bricks[nrow].right
+                elif self.moving_down:
+                    self.moving_down = False
+                    self.rect.bottom = maze.bricks[nrow].top
+                elif self.moving_right:
+                    self.moving_right = False
+                    self.rect.right = maze.bricks[nrow].left

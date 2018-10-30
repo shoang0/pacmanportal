@@ -10,7 +10,7 @@ class EventLoop:
         return 'eventLoop, finished=' + str(self.finished) + ')'
 
     @staticmethod
-    def check_events(pacman, play_button):
+    def check_events(pacman, play_button, stats):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -18,7 +18,7 @@ class EventLoop:
                 check_keydown_events(event, pacman)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                check_play_button(play_button, mouse_x, mouse_y)
+                check_buttons(play_button, mouse_x, mouse_y, stats)
 
 
 def check_keydown_events(event, pacman):
@@ -47,9 +47,9 @@ def check_keydown_events(event, pacman):
         sys.exit()
 
 
-def check_play_button(play_button, mouse_x, mouse_y):
-    """Start a new game when the player clicks Play"""
-    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
-    if button_clicked:
-        # Hide cursor
+def check_buttons(play_button, mouse_x, mouse_y, stats):
+    if play_button.rect.collidepoint(mouse_x, mouse_y):
         pygame.mouse.set_visible(False)
+        stats.game_active = True
+    elif play_button.hs_image_rect.collidepoint(mouse_x, mouse_y):
+        stats.show_hs = True
